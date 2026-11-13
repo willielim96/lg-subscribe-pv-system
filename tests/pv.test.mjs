@@ -1,0 +1,10 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { calculatePV } from '../lib/pv.mjs';
+const base = { sale_type: 'subscribe', monthly_fee: 70, years: 7, offer: 'half', category: 'Water purifier', installed_on: '2026-11-14' };
+test('half price uses normal fee and adds water bonus', () => assert.equal(calculatePV(base), 1700));
+test('pending earns nothing', () => assert.equal(calculatePV({...base, installed_on: null}), 0));
+test('bundle deducts RM10', () => assert.equal(calculatePV({...base, offer: 'bundle'}), 1500));
+test('bonus expires after December', () => assert.equal(calculatePV({...base, installed_on: '2027-01-01'}), 1400));
+test('five years and special price', () => assert.equal(calculatePV({...base, years: 5, monthly_fee: 80, offer: 'special', category: 'Washer'}), 1360));
+test('cash uses manual PV', () => assert.equal(calculatePV({...base, sale_type: 'cash', manual_pv: 1234}), 1234));
