@@ -18,3 +18,4 @@ Follow AGENTS.md (project rules and code organization).
   offer_type, cash_price, cash_buy_pv, status, installation_date, keyed_at, notes, removed_at,
   created_at, updated_at. Code mapping lives in lib/order-mapping.mjs.
 - Never put service-role or secret keys in code or `NEXT_PUBLIC_*` variables.
+- Vercel Preview uses the separate TEST Supabase project `lg-pv-test`; Production uses the original project. Never point Preview at production data.
