@@ -37,9 +37,9 @@ Launch checklist (only when the owner says "go live"):
 ## 3. App structure
 
 - app/page.tsx renders components/pv-dashboard.tsx (kept thin).
-- components/: login-form, pv-dashboard (orders form and lists), commission-summary, customer-database, whatsapp-button.
+- components/: login-form, pv-dashboard (tabs, orders form and lists), order-search, commission-summary, customer-database, whatsapp-button.
 - hooks/: use-pv-tracker (auth, load/save/cancel orders), use-customer-merges (merge history).
-- lib/: pv.mjs (PV), commission.mjs (commission), customers.mjs (customer grouping, contract price), whatsapp.mjs (phone normalisation), order-mapping.mjs (app fields <-> database columns), orders.ts (agents, categories, form defaults), supabase/client.ts.
+- lib/: pv.mjs (PV), commission.mjs (commission), customers.mjs (customer grouping, contract price), order-search.mjs (filters, CSV export), whatsapp.mjs (phone normalisation), order-mapping.mjs (app fields <-> database columns), orders.ts (agents, categories, form defaults), supabase/client.ts.
 - tests/: node --test unit tests for all lib logic.
 - Agents are fixed in lib/orders.ts: LGM121099 WILLIE LIM, LGM214656 LIEU WEI TIAN.
 
@@ -50,13 +50,14 @@ Launch checklist (only when the owner says "go live"):
 - Subscribe: (monthly fee - RM10 if Existing+New / New+New) x 17 (5-year) or x 20 (7-year).
 - Half price offer (first 9 months 50%): PV uses the NORMAL monthly fee.
 - Special price: the discounted monthly fee is stored and used.
-- Water purifier: +300 PV if installed on or before 2026-12-31 (promotion start date not confirmed).
+- Water purifier: +300 PV per installed unit, once (in its installation month), if the installation date is on or before 2026-12-31. Pending = no bonus. Changing the installation date recalculates automatically.
+- Existing + New / New + New: the customer's monthly fee is reduced by RM10 every month; PV and contract total both use the reduced fee.
 - Monthly targets shown: 15,000 PV and 22,100 PV. PV counts in the installation month.
 
 ## 5. Commission rules (lib/commission.mjs - do not change without owner approval)
 
 Per agent, per installation month, cancelled and pending orders excluded:
-- Subscribe basic: Subscribe PV x 15% x 70% (only the first 70% is shown; the remaining 30% is not implemented).
+- Subscribe basic: Subscribe PV x 15% (owner rule 2026-11-14: no 70% / 30% split, no deferred commission).
 - Cash Buy: original price x 13%, once.
 - Performance bonus on total PV: 5% (<5,100), 6% (5,100+), 8% (10,200+), 10% (17,000+), 12% (22,100+).
 - Allowance by total PV: RM800 (5,000+), RM1,000 (8,500+), RM1,500 (12,000+), RM2,500 (15,000+), RM3,000 (20,000+), RM4,000 (30,000+).
@@ -70,18 +71,27 @@ Per agent, per installation month, cancelled and pending orders excluded:
 - Phones normalised: 0xx -> 60xx (Malaysia), 8-digit 6/8/9xxxxxxx -> 65 (Singapore), +60/+65 kept.
 - Contract total: normal = fee x months; half price = 9 months at 50% then full fee; Existing+New = (fee - RM10) x months; special = discounted fee x months; Cash Buy = one-off cash price. 5 years = 60 months, 7 years = 84 months.
 - Manual merge stores (from_order_id, into_order_id) in customer_merges. Orders are never changed; undo sets undone_at, so history is kept.
+- A merged customer keeps the name and phone of the customer it was merged INTO; names from merged-in orders never overwrite it. To rename, edit the order.
+- Special Price orders: normal_monthly_fee holds the discounted fee; original_monthly_fee (optional) holds the original price and is shown in Purchase History.
+
+## 6b. Orders: notes, search and export
+
+- Notes: orders.notes, editable in Add Order and Edit Order, shown on order cards, Purchase History and export.
+- Order search tab (components/order-search.tsx, lib/order-search.mjs): partial name / phone / order number, agent, status (Pending / Installed / Cancelled), date range on Key-in date or Installation date.
+- Export Excel downloads a .csv (UTF-8 with BOM so Excel shows Chinese) of the filtered orders. Cells starting with = + - @ are prefixed with ' to stop Excel formulas.
 
 ## 7. Database (Supabase)
 
 Production tables (unchanged so far): orders, agents, app_users, order_audit_log. RLS on all; access only for users in app_users (function is_app_user()). Authenticated users may select/insert/update orders; delete is not granted.
 
-orders columns: id, order_number (unique), agent_code (FK agents), customer_name, customer_phone, category, product_model, order_type (Subscribe / Cash Buy), contract_years (5/7), normal_monthly_fee, offer_type (Normal / Limited 50% off / Special price offer / Existing + New / New + New), cash_price, cash_buy_pv, status (Pending / Installed, must match installation_date), installation_date, keyed_at, notes, removed_at (set = cancelled), created_at, updated_at.
+orders columns: id, order_number (unique), agent_code (FK agents), customer_name, customer_phone, category, product_model, order_type (Subscribe / Cash Buy), contract_years (5/7), normal_monthly_fee, original_monthly_fee (added by migration 0002, Special Price only), offer_type (Normal / Limited 50% off / Special price offer / Existing + New / New + New), cash_price, cash_buy_pv, status (Pending / Installed, must match installation_date), installation_date, keyed_at, notes, removed_at (set = cancelled), created_at, updated_at.
 
 Migration log:
 | File | Purpose | TEST | PRODUCTION |
 |---|---|---|---|
 | supabase/test-schema.sql (local copy of production structure) | build the test project | applied 2026-11-14 | n/a |
 | supabase/migrations/202611150001_customer_merges.sql | customer merge history | applied 2026-11-14 | NOT applied - apply at launch after owner confirms |
+| supabase/migrations/202611150002_original_monthly_fee.sql | Special Price original monthly price | applied 2026-11-14 | NOT applied - REQUIRED before PR #2 code reaches production (saving orders writes this column) |
 
 Note: supabase/migrations/202611140001_initial.sql in the local folder is outdated (different column names) and must never be run.
 
@@ -89,15 +99,14 @@ Note: supabase/migrations/202611140001_initial.sql in the local folder is outdat
 
 Open Pull Requests (not merged, production unchanged):
 - PR #1 https://github.com/willielim96/lg-subscribe-pv-system/pull/1 - Commission page, WhatsApp button, Cash Buy price, blue theme.
-- PR #2 https://github.com/willielim96/lg-subscribe-pv-system/pull/2 - Customer Database (stacked on PR #1; merge PR #1 first).
+- PR #2 https://github.com/willielim96/lg-subscribe-pv-system/pull/2 - Customer Database, merge/undo, 15% commission, order notes, Special Price original price, order search/filter/Excel export (stacked on PR #1; merge PR #1 first). Needs migrations 0001 and 0002 on production before or together with the merge.
 
 Production (main) currently runs the first Next.js version (orders + PV only).
 
-Not done yet / open questions for the owner:
-- Remaining 30% Subscribe commission: when and how it is paid.
-- Special price orders: original monthly price is not stored.
-- Existing+New contract total assumes the customer pays fee - RM10 every month - confirm.
-- Water purifier +300 PV promotion start date.
-- Notes field, order search/filter, export, audit history, agent management (UI not built).
-- After a manual merge, the customer is shown with the name from the newest order (not necessarily the one chosen as "merge into").
-- Production Supabase: "Allow new users to sign up" is ON (strangers still cannot read data). Recommend turning it off.
+Decided by the owner on 2026-11-14 (implemented in PR #2): 15% basic commission with no deferral; Existing+New = fee - RM10 for PV and contract; water purifier +300 PV per unit until 2026-12-31 by installation date; merged customers keep their original name; notes; search/filter/export; Special Price original price.
+
+Not done yet / open items:
+- Audit history (order_audit_log table exists but the app does not write to it) and agent management UI.
+- Water purifier promotion has no start date (all installs up to 2026-12-31 qualify).
+- Export is CSV (opens in Excel), not .xlsx.
+- Production Supabase: "Allow new users to sign up" is ON (strangers still cannot read data). Recommend turning it off before launch.
