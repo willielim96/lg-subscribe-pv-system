@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { CommissionSummary } from './commission-summary';
+import { CustomerDatabase } from './customer-database';
 import { WhatsAppButton } from './whatsapp-button';
 import { calculatePV } from '../lib/pv.mjs';
 import { agents, categories, empty, fmt } from '../lib/orders';
@@ -17,8 +18,8 @@ export function PVDashboard() {
   return <main>
     <header><div><span className="brand">LG / PV TRACKER</span><h1>业绩总览<span className="dot">.</span></h1><p>记录订单，掌握每月进度。</p></div><button className="secondary" onClick={async () => { const { error } = await db.auth.signOut(); if (error) setMessage(error.message); }}>退出登录</button></header>
     <div className="toolbar"><select aria-label="Agent" value={agent} onChange={e => setAgent(e.target.value)}>{Object.entries(agents).map(([id, name]) => <option key={id} value={id}>{name} · {id}</option>)}</select><input aria-label="业绩月份" type="month" value={month} onChange={e => setMonth(e.target.value)} /><button className="secondary" onClick={() => void refresh()}>刷新</button></div>
-    <nav className="view-tabs"><button onClick={() => setView('orders')} className={view === 'orders' ? '' : 'secondary'}>Orders / PV</button><button onClick={() => setView('commission')} className={view === 'commission' ? '' : 'secondary'}>Commission</button></nav>
-    {view === 'commission' ? <CommissionSummary orders={tracker.orders} agent={agent} month={month} loaded={loaded} /> : <>
+    <nav className="view-tabs"><button onClick={() => setView('orders')} className={view === 'orders' ? '' : 'secondary'}>Orders / PV</button><button onClick={() => setView('commission')} className={view === 'commission' ? '' : 'secondary'}>Commission</button><button onClick={() => setView('customers')} className={view === 'customers' ? '' : 'secondary'}>Customers</button></nav>
+    {view === 'commission' ? <CommissionSummary orders={tracker.orders} agent={agent} month={month} loaded={loaded} /> : view === 'customers' ? <CustomerDatabase orders={tracker.orders} loaded={loaded} db={db} /> : <>
     <section className="stats"><article className="hero"><small>MONTHLY PERFORMANCE</small><h2>{loaded ? fmt(total) : '—'} <span>PV</span></h2><p>{month} · {agents[agent]}</p></article><article><small>已安装订单</small><h2>{loaded ? installed.length : '—'}</h2><p>计入当前月份</p></article><article><small>Waiting List</small><h2>{loaded ? waiting.length : '—'}</h2><p>等待安装 · 暂不计分</p></article></section>
     <section className="targets">{[15000, 22100].map(goal => <article key={goal}><div><strong>{fmt(goal)} PV 目标</strong><span>{loaded ? total >= goal ? '已达标 ✓' : `还差 ${fmt(goal - total)}` : '加载中'}</span></div><progress max={goal} value={total} /></article>)}</section>
     <p className="message" role="status">{message}</p>
