@@ -78,6 +78,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- Order Number disables browser completion and ignores Enter from the field so a scanner suffix or accidental Enter does not submit the form. Tab and the Save button still work.
+
 - Notes: orders.notes, editable in Add Order and Edit Order, shown on order cards and Purchase History.
 - Order search tab (components/order-search.tsx, lib/order-search.mjs): partial name / phone / order number, agent, status (Pending / Installed / Cancelled), date range on Key-in date or Installation date.
 - Export Excel: removed at the owner's request (2026-11-14). Do not add it back unless asked.

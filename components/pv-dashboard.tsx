@@ -27,7 +27,18 @@ export function PVDashboard() {
     <p className="message" role="status">{message}</p>
     <div className="workspace"><section className="panel"><h2>{editing ? '修改订单' : '新增订单'}</h2><p className="muted">一张 Order Number 对应一台产品</p><form onSubmit={save}>
       <label>顾客姓名<input required value={form.customer} onChange={e => setForm({ ...form, customer: e.target.value })} /></label>
-      <div className="pair"><label>电话<input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></label><label>Order Number<input required value={form.order_number} onChange={e => setForm({ ...form, order_number: e.target.value })} /></label></div>
+      <div className="pair"><label>电话<input type="tel" name="customer-phone" autoComplete="off" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></label><label>Order Number<input
+          required
+          name="order-number"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          value={form.order_number}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault();
+          }}
+          onChange={e => setForm({ ...form, order_number: e.target.value })}
+        /></label></div>
       <label>Agent<select value={form.agent} onChange={e => setForm({ ...form, agent: e.target.value })}>{Object.entries(agents).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <div className="pair"><label>产品<select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label>型号<input value={form.model} onChange={e => setForm({ ...form, model: e.target.value })} /></label></div>
       <label>购买方式<select value={form.sale_type} onChange={e => setForm({ ...form, sale_type: e.target.value })}><option value="subscribe">Subscribe</option><option value="cash">Cash Buy</option></select></label>
