@@ -9,7 +9,7 @@ export function CommissionSummary({ orders, agent, month, loaded }: { orders: Or
   const [year, monthNumber] = month.split('-').map(Number);
   const payout = `${monthNumber === 12 ? year + 1 : year}-${String(monthNumber === 12 ? 1 : monthNumber + 1).padStart(2, '0')}`;
   const items = [
-    ['Subscribe 当月基本佣金', 'Subscribe PV × 15% × 70%', result.basic],
+    ['Subscribe 基本佣金', 'Subscribe PV × 15%', result.basic],
     ['Cash Buy 佣金', '产品原价 × 13% · 一次过', result.cash],
     ['Performance Bonus', `总 PV × ${result.bonusRate * 100}%`, result.bonus],
     ['Allowance', '按当月总 PV 等级', result.allowance],
