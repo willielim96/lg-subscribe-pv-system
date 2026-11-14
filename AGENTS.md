@@ -50,3 +50,13 @@ when changing those features. Keep database access out of presentation component
 Prefer clear responsibility boundaries over arbitrary file-size limits; avoid
 generic repositories or abstractions with no current use. Preserve behavior,
 validation and error handling when refactoring, and verify imports and builds.
+
+## Shared workflow (Claude and ChatGPT)
+
+Both assistants change this same GitHub repository. Follow PROJECT_HANDOFF.md section 2:
+read the latest code and PROJECT_HANDOFF.md first and never overwrite the other assistant's work;
+use a feature branch and Pull Request; test on the Vercel Preview (test Supabase only);
+never merge to main or change Production without the owner's explicit confirmation;
+save database changes in supabase/migrations and apply them to test first;
+never commit secrets or .env files; update PROJECT_HANDOFF.md in every PR that changes
+features, business rules or the database.
