@@ -1,7 +1,7 @@
 # LG PV Tracker - Project Handoff
 
 Shared by Claude and ChatGPT. Read this file and AGENTS.md before changing anything.
-Last updated: 2026-11-14 (Claude). Status: IN DEVELOPMENT - not launched to production.
+Last updated: 2026-11-14 (Claude). Status: LIVE in production since 2026-11-14 (PR #1 + PR #2). New work: feature branch + PR as below.
 
 ## 1. Where things are
 
@@ -82,7 +82,7 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 7. Database (Supabase)
 
-Production tables (unchanged so far): orders, agents, app_users, order_audit_log. RLS on all; access only for users in app_users (function is_app_user()). Authenticated users may select/insert/update orders; delete is not granted.
+Production tables: orders, agents, app_users, order_audit_log, customer_merges (added 2026-11-14). RLS on all; access only for users in app_users (function is_app_user()). Authenticated users may select/insert/update orders; delete is not granted.
 
 orders columns: id, order_number (unique), agent_code (FK agents), customer_name, customer_phone, category, product_model, order_type (Subscribe / Cash Buy), contract_years (5/7), normal_monthly_fee, original_monthly_fee (added by migration 0002, Special Price only), offer_type (Normal / Limited 50% off / Special price offer / Existing + New / New + New), cash_price, cash_buy_pv, status (Pending / Installed, must match installation_date), installation_date, keyed_at, notes, removed_at (set = cancelled), created_at, updated_at.
 
@@ -90,22 +90,25 @@ Migration log:
 | File | Purpose | TEST | PRODUCTION |
 |---|---|---|---|
 | supabase/test-schema.sql (local copy of production structure) | build the test project | applied 2026-11-14 | n/a |
-| supabase/migrations/202611150001_customer_merges.sql | customer merge history | applied 2026-11-14 | NOT applied - apply at launch after owner confirms |
-| supabase/migrations/202611150002_original_monthly_fee.sql | Special Price original monthly price | applied 2026-11-14 | NOT applied - REQUIRED before PR #2 code reaches production (saving orders writes this column) |
+| supabase/migrations/202611150001_customer_merges.sql | customer merge history | applied 2026-11-14 | applied 2026-11-14 (launch, owner approved) |
+| supabase/migrations/202611150002_original_monthly_fee.sql | Special Price original monthly price | applied 2026-11-14 | applied 2026-11-14 (launch, owner approved) |
 
 Note: supabase/migrations/202611140001_initial.sql in the local folder is outdated (different column names) and must never be run.
 
 ## 8. Progress
 
-Open Pull Requests (not merged, production unchanged):
-- PR #1 https://github.com/willielim96/lg-subscribe-pv-system/pull/1 - Commission page, WhatsApp button, Cash Buy price, blue theme.
-- PR #2 https://github.com/willielim96/lg-subscribe-pv-system/pull/2 - Customer Database, merge/undo, 15% commission, order notes, Special Price original price, order search/filter (stacked on PR #1; merge PR #1 first). Needs migrations 0001 and 0002 on production before or together with the merge.
+Launch 2026-11-14 (owner confirmed "go live"):
+- Production migrations 0001 and 0002 applied first (additive; the 3 existing orders unchanged).
+- PR #1 https://github.com/willielim96/lg-subscribe-pv-system/pull/1 merged into main (merge commit 9712356) - Commission page, WhatsApp button, Cash Buy price, blue theme.
+- PR #2 https://github.com/willielim96/lg-subscribe-pv-system/pull/2 merged into main (merge commit a8cf4c6) - Customer Database, merge/undo, 15% commission, order notes, Special Price original price, order search/filter.
+- Vercel Production deployment of main a8cf4c6: Ready; the live site uses the production Supabase project. Later doc-only commits on main also deploy automatically.
 
-Production (main) currently runs the first Next.js version (orders + PV only).
+Open Pull Requests: none. Old branches feature/commission-whatsapp and feature/customer-database are merged and may be deleted.
 
-Decided by the owner on 2026-11-14 (implemented in PR #2): 15% basic commission with no deferral; Existing+New = fee - RM10 for PV and contract; water purifier +300 PV per unit until 2026-12-31 by installation date; merged customers keep their original name; notes; search/filter (no Excel export); Special Price original price.
+Decided by the owner on 2026-11-14 (live since PR #2): 15% basic commission with no deferral; Existing+New = fee - RM10 for PV and contract; water purifier +300 PV per unit until 2026-12-31 by installation date; merged customers keep their original name; notes; search/filter (no Excel export); Special Price original price.
 
 Not done yet / open items:
 - Audit history (order_audit_log table exists but the app does not write to it) and agent management UI.
 - Water purifier promotion has no start date (all installs up to 2026-12-31 qualify).
-- Production Supabase: "Allow new users to sign up" is ON (strangers still cannot read data). Recommend turning it off before launch.
+- Production Supabase: "Allow new users to sign up" is ON (strangers still cannot read data). Recommend turning it off.
+- Test database lg-pv-test still holds one test order TEST-SP-001 (safe to delete).
