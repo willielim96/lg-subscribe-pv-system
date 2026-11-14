@@ -64,7 +64,7 @@ function CustomerDetail({ customer: c, customers, merges, onBack, onMerge, order
   const history = merges.merges.filter(m => orderIds.has(m.into_order_id) || orderIds.has(m.from_order_id));
   const facts: [string, string][] = [
     ['电话', c.phone || '—'], ['第一张订单', day(c.firstOrderDate)], ['订单总数', String(c.totalOrders)],
-    ['Pending', String(c.pendingOrders)], ['已安装', String(c.installedOrders)], ['已安装 PV', fmt(c.installedPV)], ['合约总值', money(c.contractValue)],
+    ['Pending', String(c.pendingOrders)], ['已安装', String(c.installedOrders)], ['已安装 PV', fmt(c.installedPV)],
   ];
 
   return <section className="panel customers">
@@ -100,7 +100,7 @@ function PurchaseRow({ order: o }: { order: Order }) {
     : [
       ['原价月费', money(p.original)], ['实际月费', money(p.actual)], ['优惠', offerNames[o.offer] || o.offer],
       ['优惠期间月费', p.promoPrice === null ? '—' : money(p.promoPrice)], ['优惠月数', p.promoMonths ? p.promoMonths + ' 个月' : '—'],
-      ['合约', o.years + ' Years'], ['合约总付款', money(p.total)],
+      ['合约', o.years + ' Years'],
     ];
   const status = o.cancelled ? '已取消' : o.installed_on ? 'Installed' : 'Pending';
   return <article className={'order purchase' + (o.cancelled ? ' cancelled' : '')}>
