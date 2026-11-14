@@ -1,6 +1,6 @@
 # Instructions for Claude
 
-Follow AGENTS.md (project rules and code organization).
+Follow AGENTS.md (project rules and code organization) and PROJECT_HANDOFF.md (shared Claude + ChatGPT workflow, business rules, database, progress).
 
 ## Owner preferences
 - The owner is not a professional developer. Reply in simple Chinese (Malaysia style), step by step.
