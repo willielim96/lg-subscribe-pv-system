@@ -9,5 +9,6 @@ test('Malaysian local and international formats open the same chat', () => {
 });
 test('preserves foreign country codes and rejects unusable values', () => {
   assert.equal(whatsappUrl('+65 8123 4567'), 'https://wa.me/6581234567');
+  assert.equal(whatsappUrl('8123 4567'), 'https://wa.me/6581234567');
   for (const phone of ['', '123', 'call me', '0123456789 / 0191234567']) assert.equal(whatsappUrl(phone), null);
 });
