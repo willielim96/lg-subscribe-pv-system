@@ -53,6 +53,23 @@ test('manual merge joins customers, undo by removing it, orders untouched', () =
   assert.equal(buildCustomers([a, b], []).length, 2);
 });
 
+test('merged customer keeps the target name even when the merged-in order is newer', () => {
+  const a = order({ customer: 'TAN AH KOW', created_at: '2026-10-01' });
+  const b = order({ customer: 'TAN A KOW', created_at: '2026-11-30' });
+  const [merged] = buildCustomers([a, b], [{ from_order_id: b.id, into_order_id: a.id }]);
+  assert.equal(merged.name, 'TAN AH KOW');
+});
+
+test('special price shows the recorded original price', () => {
+  assert.equal(priceDetails(order({ offer: 'special', monthly_fee: 80, original_fee: 120 })).original, 120);
+  assert.equal(priceDetails(order({ offer: 'special', monthly_fee: 80, original_fee: '' })).original, null);
+});
+
+test('Existing + New pays RM10 less every month', () => {
+  const p = priceDetails(order({ offer: 'bundle', monthly_fee: 100, years: 7 }));
+  assert.deepEqual([p.actual, p.total], [90, 7560]);
+});
+
 test('partial search by name, phone and order number', () => {
   const list = buildCustomers([order({ order_number: 'LG-778899' }), order({ customer: 'LIM MEI LING', phone: '0191112222' })]);
   assert.equal(searchCustomers(list, 'ah k').length, 1);
