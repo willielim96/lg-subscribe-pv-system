@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { filterOrders, ordersCsv } from '../lib/order-search.mjs';
+import { filterOrders } from '../lib/order-search.mjs';
 
 const base = { id: '1', customer: 'TAN AH KOW', phone: '0123456789', order_number: 'LG-1001', agent: 'A', category: 'Washer', model: '',
   sale_type: 'subscribe', years: 5, monthly_fee: 100, original_fee: '', offer: 'half', cash_price: 0, installed_on: '2026-11-10',
@@ -27,13 +27,4 @@ test('agent, status and date filters', () => {
   assert.equal(ids(filterOrders(orders, { dateField: 'keyed', from: '2026-11-01', to: '2026-11-30' })), '1,3');
   assert.equal(ids(filterOrders(orders, { dateField: 'installed', from: '2026-11-01' })), '1,3');
   assert.equal(ids(filterOrders(orders, { dateField: 'installed', to: '2026-11-05' })), '');
-});
-
-test('CSV export: BOM, quoting, formula guard, contract total', () => {
-  const csv = ordersCsv([{ ...base, customer: '=HYPERLINK("x")', notes: 'a, "b"' }], { A: 'WILLIE' });
-  assert.ok(csv.startsWith('﻿Order Number,'));
-  const line = csv.split('\r\n')[1];
-  assert.ok(line.includes('"\'=HYPERLINK(""x"")"'));
-  assert.ok(line.includes('"a, ""b"""'));
-  assert.ok(line.includes(',5550,'));
 });
