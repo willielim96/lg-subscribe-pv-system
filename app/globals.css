@@ -465,11 +465,40 @@ progress::-moz-progress-bar { background: #b69c60; border-radius: 8px; }
 @media (max-width: 380px) { .pair { grid-template-columns: 1fr; } header { flex-wrap: wrap; } }
 @media (prefers-reduced-motion: reduce) { button, .whatsapp-button { transition: none; } }
 
-/* Champagne accents on charcoal surfaces. */
-header { border-left-color: #b39c68; }
-.brand { color: #776235; }
-.stats .hero h2 { color: #f0dfaf; }
-.view-tabs button:not(.secondary), .panel nav .selected { background: #d7c591; color: #292b2d; }
-form > button:not(.secondary) { background: #343638; color: #f0dfaf; }
-.commission { border-top-color: #b39c68; }
-.dot { color: #b39c68; }
+/* Blue professional theme: overrides the earlier neutral palette. */
+:root { color: #1f2937; background: #f4f6f9; }
+body { background: linear-gradient(160deg, #f8fafc, #f1f4f8 65%, #e8edf4); }
+header { border-left-color: #1e4fa3; }
+header p, .muted, small, footer, .commission-row p { color: #6b7280; }
+.brand { color: #1e4fa3; }
+.dot { color: #1e4fa3; }
+button { background: #1e4fa3; }
+button:hover:not(:disabled) { box-shadow: 0 4px 12px #1e4fa333; }
+.secondary { color: #1f3b6e; border-color: #d5deea; }
+.secondary:hover:not(:disabled) { background: #e8effa; }
+input, select { background: #fbfcfe; border-color: #d5deea; color: #1f2937; }
+label { color: #475569; }
+.stats article, .targets article, .panel { border-color: #e2e8f0; }
+.stats article:not(.hero) { border-top-color: #1e4fa3; }
+.stats .hero { background: radial-gradient(ellipse at 100% 0%, #3b6fd1 0, transparent 65%), linear-gradient(130deg, #143670, #1e4fa3); border-color: #1e4fa3; box-shadow: 0 12px 30px #1e4fa340; }
+.hero small, .hero p { color: #dbe7fb; }
+.stats .hero h2 { color: #fff; }
+progress, progress::-webkit-progress-bar { background: #e2e8f0; }
+progress::-webkit-progress-value { background: linear-gradient(90deg, #1e4fa3, #4f86e0); }
+progress::-moz-progress-bar { background: #1e4fa3; }
+.view-tabs { background: #e2e8f0; }
+.panel nav { background: #eef2f7; }
+.view-tabs button:not(.secondary), .panel nav .selected { background: #1e4fa3; color: #fff; }
+form > button:not(.secondary) { background: #1e4fa3; color: #fff; }
+.panel > h2 { border-bottom-color: #e2e8f0; }
+.estimate { background: #eef4fd; border-color: #cfdcf3; }
+.order { background: #fff; border-color: #e2e8f0; border-left-color: #1e4fa3; }
+.orderhead b, .actions a { color: #1e4fa3; }
+.empty { color: #64748b; }
+.empty h3 { color: #334155; }
+.commission { border-top-color: #1e4fa3; }
+.commission-row { border-bottom-color: #e2e8f0; }
+.commission-row:last-of-type { background: #e8effa; }
+.commission-row h2 { color: #143670; }
+.login { border-top-color: #1e4fa3; }
+input:focus, select:focus, button:focus-visible, a:focus-visible { outline-color: #4f86e0; }
