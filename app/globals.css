@@ -1,7 +1,7 @@
 :root {
     font-family: Arial, "Microsoft YaHei", sans-serif;
-    color: #172b29;
-    background: #f4f6f3;
+    color: #292b2d;
+    background: #f2f0eb;
     font-synthesis: none
 }
 
@@ -10,7 +10,14 @@
 }
 
 body {
-    margin: 0
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 8% 0%, #dedbd2 0, transparent 44%),
+        radial-gradient(ellipse at 95% 25%, #ece2cc 0, transparent 42%),
+        linear-gradient(160deg, #faf8f2, #f2f1ed 65%, #e5e4df);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
 }
 
 main {
@@ -30,7 +37,13 @@ header,
 }
 
 header {
-    margin-bottom: 32px
+    margin-bottom: 28px;
+    padding: 28px 32px;
+    background: rgba(255, 255, 255, .65);
+    border: 1px solid rgba(255, 255, 255, .9);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px #22242610;
+    border-left: 5px solid #343638;
 }
 
 h1 {
@@ -51,7 +64,7 @@ header p,
 .muted,
 small,
 footer {
-    color: #6a7873
+    color: #74736e
 }
 
 .brand {
@@ -87,16 +100,16 @@ select {
 
 input,
 select {
-    border: 1px solid #d4ddd7;
+    border: 1px solid #dcd9d0;
     background: white;
-    color: #172b29;
+    color: #292b2d;
     padding: 11px;
     width: 100%
 }
 
 button {
     cursor: pointer;
-    background: #174d40;
+    background: #343638;
     color: white;
     border: 1px solid transparent;
     padding: 11px 17px;
@@ -110,8 +123,8 @@ button:disabled {
 
 .secondary {
     background: white;
-    color: #35574b;
-    border-color: #dce3dc
+    color: #4d4c47;
+    border-color: #dfdbd0
 }
 
 .stats {
@@ -124,9 +137,10 @@ button:disabled {
 .targets article,
 .panel {
     background: #fff;
-    border: 1px solid #e0e6de;
-    border-radius: 16px;
-    padding: 24px
+    border: 1px solid #e4e0d7;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 28px #22242608;
 }
 
 .stats h2 {
@@ -141,13 +155,17 @@ button:disabled {
 }
 
 .stats .hero {
-    background: #174d40;
-    color: white
+    background: radial-gradient(ellipse at 100% 0%, #666156 0, transparent 65%), linear-gradient(130deg, #202224, #3c3d3c);
+    color: white;
+    border-color: #696252;
+    box-shadow: 0 12px 30px #34363830;
+    position: relative;
+    overflow: hidden;
 }
 
 .hero small,
 .hero p {
-    color: #c1dbcb
+    color: #e9dfc7
 }
 
 .stats p {
@@ -178,11 +196,11 @@ progress {
 }
 
 progress::-webkit-progress-bar {
-    background: #edf1e9
+    background: #eeebe2
 }
 
 progress::-webkit-progress-value {
-    background: #7da37d
+    background: #b39c68
 }
 
 .workspace {
@@ -220,7 +238,7 @@ label {
 
 .estimate {
     padding: 15px;
-    background: #eff5ec;
+    background: #f5f0e3;
     border-radius: 9px;
     display: flex;
     justify-content: space-between;
@@ -239,8 +257,12 @@ nav button {
 }
 
 .order {
-    padding: 22px 0;
-    border-bottom: 1px solid #e6eae5
+    padding: 22px;
+    margin-top: 18px;
+    background: linear-gradient(130deg, #fcfaf5, #fff);
+    border: 1px solid #e8e1d0;
+    border-left: 3px solid #b39c68;
+    border-radius: 14px;
 }
 
 .order p {
@@ -253,7 +275,7 @@ nav button {
 }
 
 .orderhead b {
-    color: #246049
+    color: #806a37
 }
 
 .actions {
@@ -270,18 +292,18 @@ nav button {
 }
 
 .actions a {
-    color: #246049;
+    color: #806a37;
     margin-right: auto
 }
 
 .empty {
     text-align: center;
     padding: 70px 10px;
-    color: #7b8780
+    color: #817e75
 }
 
 .empty h3 {
-    color: #43584a
+    color: #615b4c
 }
 
 .message {
@@ -298,7 +320,12 @@ footer {
 
 .login {
     max-width: 440px;
-    margin: 8vh auto
+    margin: 8vh auto;
+    background: #ffffffed;
+    border: 1px solid white;
+    border-top: 5px solid #343638;
+    border-radius: 24px;
+    box-shadow: 0 24px 70px #2325271a;
 }
 
 .login h1 {
@@ -313,7 +340,7 @@ input:focus,
 select:focus,
 button:focus-visible,
 a:focus-visible {
-    outline: 2px solid #408265;
+    outline: 2px solid #ad955f;
     outline-offset: 3px
 }
 
@@ -385,3 +412,93 @@ a:focus-visible {
         overflow-wrap: anywhere
     }
 }
+.actions .whatsapp-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 16px; border-radius: 9px; background: #128c4b; color: white; font-weight: 600; text-decoration: none; margin-right: 0; }
+.actions .whatsapp-button:hover { background: #0e713c; }
+
+.view-tabs { margin-bottom: 20px; }
+.commission-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; border-bottom: 1px solid #e4e0d7; flex-wrap: wrap; }
+.commission-row p { font-size: 13px; color: #74736e; margin: 6px 0 0; }
+
+/* Shared controls and dashboard surfaces. */
+button, .whatsapp-button { transition: background-color .16s ease, box-shadow .16s ease; }
+button:hover:not(:disabled) { box-shadow: 0 4px 12px #3436381b; }
+.secondary:hover:not(:disabled) { background: #f0eadc; }
+input, select { background: #fdfcf8; border-color: #dfdacd; }
+input:focus, select:focus { background: #fff; }
+label { color: #5f594b; }
+.toolbar { padding: 14px; background: #ffffffb8; border: 1px solid #ffffff; border-radius: 16px; box-shadow: 0 4px 20px #22242605; }
+.view-tabs { display: inline-flex; padding: 5px; background: #e5e1d7; border-radius: 13px; gap: 4px; }
+.view-tabs button { border-radius: 9px; padding: 11px 22px; }
+.view-tabs .secondary { background: transparent; border-color: transparent; }
+.stats h2, .orderhead b, .commission-row b { font-variant-numeric: tabular-nums; }
+.stats .hero::after { content: ''; position: absolute; width: 200px; height: 200px; border: 1px solid #ffffff18; border-radius: 50%; right: -85px; bottom: -100px; pointer-events: none; }
+.stats article:not(.hero) { border-top: 3px solid #caba92; }
+.targets article { background: #ffffffb8; }
+progress { height: 8px; background: #ece7da; }
+progress::-webkit-progress-value { background: linear-gradient(90deg, #9d844c, #d7c591); border-radius: 8px; }
+progress::-moz-progress-bar { background: #b69c60; border-radius: 8px; }
+.panel > h2 { padding-bottom: 16px; border-bottom: 1px solid #eeebe3; }
+.panel nav { padding: 5px; background: #f3f0e8; border-radius: 12px; }
+.panel nav .secondary { background: transparent; border-color: transparent; }
+.orderhead { gap: 12px; flex-wrap: wrap; }
+.order p, .order small { overflow-wrap: anywhere; }
+.estimate { background: #f5efdf; border: 1px solid #e6dcc1; }
+.commission { border-top: 4px solid #343638; }
+.commission-row:last-of-type { background: #f2ead6; padding: 22px; border-radius: 12px; margin: 16px 0; border: 0; }
+.commission-row h2 { color: #343638; margin: 0; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) {
+    header { padding: 20px; border-radius: 18px; align-items: flex-start; }
+    header h1 { font-size: 30px; letter-spacing: -1px; }
+    header p { font-size: 13px; }
+    header > button { flex-shrink: 0; padding: 9px 12px; }
+    .toolbar { gap: 10px; }
+    .toolbar select { flex-basis: 100%; }
+    .toolbar input { flex: 1; max-width: none; min-width: 0; }
+    input, select { font-size: 16px; min-width: 0; }
+    .view-tabs { display: flex; }
+    .order { padding: 16px; }
+    .stats article { min-width: 0; }
+    .stats h2 { font-size: clamp(30px, 8vw, 42px); }
+    .targets article > div { flex-wrap: wrap; gap: 8px; }
+    .login { margin: 32px 16px; max-width: none; padding: 28px 22px; }
+}
+@media (max-width: 380px) { .pair { grid-template-columns: 1fr; } header { flex-wrap: wrap; } }
+@media (prefers-reduced-motion: reduce) { button, .whatsapp-button { transition: none; } }
+
+/* Blue professional theme: overrides the earlier neutral palette. */
+:root { color: #1f2937; background: #f4f6f9; }
+body { background: linear-gradient(160deg, #f8fafc, #f1f4f8 65%, #e8edf4); }
+header { border-left-color: #1e4fa3; }
+header p, .muted, small, footer, .commission-row p { color: #6b7280; }
+.brand { color: #1e4fa3; }
+.dot { color: #1e4fa3; }
+button { background: #1e4fa3; }
+button:hover:not(:disabled) { box-shadow: 0 4px 12px #1e4fa333; }
+.secondary { color: #1f3b6e; border-color: #d5deea; }
+.secondary:hover:not(:disabled) { background: #e8effa; }
+input, select { background: #fbfcfe; border-color: #d5deea; color: #1f2937; }
+label { color: #475569; }
+.stats article, .targets article, .panel { border-color: #e2e8f0; }
+.stats article:not(.hero) { border-top-color: #1e4fa3; }
+.stats .hero { background: radial-gradient(ellipse at 100% 0%, #3b6fd1 0, transparent 65%), linear-gradient(130deg, #143670, #1e4fa3); border-color: #1e4fa3; box-shadow: 0 12px 30px #1e4fa340; }
+.hero small, .hero p { color: #dbe7fb; }
+.stats .hero h2 { color: #fff; }
+progress, progress::-webkit-progress-bar { background: #e2e8f0; }
+progress::-webkit-progress-value { background: linear-gradient(90deg, #1e4fa3, #4f86e0); }
+progress::-moz-progress-bar { background: #1e4fa3; }
+.view-tabs { background: #e2e8f0; }
+.panel nav { background: #eef2f7; }
+.view-tabs button:not(.secondary), .panel nav .selected { background: #1e4fa3; color: #fff; }
+form > button:not(.secondary) { background: #1e4fa3; color: #fff; }
+.panel > h2 { border-bottom-color: #e2e8f0; }
+.estimate { background: #eef4fd; border-color: #cfdcf3; }
+.order { background: #fff; border-color: #e2e8f0; border-left-color: #1e4fa3; }
+.orderhead b, .actions a { color: #1e4fa3; }
+.empty { color: #64748b; }
+.empty h3 { color: #334155; }
+.commission { border-top-color: #1e4fa3; }
+.commission-row { border-bottom-color: #e2e8f0; }
+.commission-row:last-of-type { background: #e8effa; }
+.commission-row h2 { color: #143670; }
+.login { border-top-color: #1e4fa3; }
+input:focus, select:focus, button:focus-visible, a:focus-visible { outline-color: #4f86e0; }
