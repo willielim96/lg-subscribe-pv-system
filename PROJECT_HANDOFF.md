@@ -74,6 +74,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 - A merged customer keeps the name and phone of the customer it was merged INTO; names from merged-in orders never overwrite it. To rename, edit the order.
 - Special Price orders: normal_monthly_fee holds the discounted fee; original_monthly_fee (optional) holds the original price and is shown in Purchase History.
 
+- Customer details and Purchase History omit contract totals. Monthly fees and Cash Buy pricing remain visible.
+
 ## 6b. Orders: notes and search
 
 - Notes: orders.notes, editable in Add Order and Edit Order, shown on order cards and Purchase History.
