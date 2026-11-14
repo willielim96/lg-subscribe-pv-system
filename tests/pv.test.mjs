@@ -7,4 +7,11 @@ test('pending earns nothing', () => assert.equal(calculatePV({...base, installed
 test('bundle deducts RM10', () => assert.equal(calculatePV({...base, offer: 'bundle'}), 1500));
 test('bonus expires after December', () => assert.equal(calculatePV({...base, installed_on: '2027-01-01'}), 1400));
 test('five years and special price', () => assert.equal(calculatePV({...base, years: 5, monthly_fee: 80, offer: 'special', category: 'Washer'}), 1360));
+test('water purifier bonus follows the installation date, once per unit', () => {
+  const unit = { ...base, offer: 'normal', monthly_fee: 100 };
+  assert.equal(calculatePV({ ...unit, installed_on: '2026-12-31' }), 2300);
+  assert.equal(calculatePV({ ...unit, installed_on: '2027-01-01' }), 2000);
+  assert.equal(calculatePV({ ...unit, installed_on: '' }), 0);
+  assert.equal(calculatePV({ ...unit, category: 'Washer' }), 2000);
+});
 test('cash uses manual PV', () => assert.equal(calculatePV({...base, sale_type: 'cash', manual_pv: 1234}), 1234));
