@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import { calculateCommission } from '../lib/commission.mjs';
 const order = {agent:'A', installed_on:'2026-11-14', cancelled:false, sale_type:'subscribe', pv:15000};
 const calc = orders => calculateCommission(orders,'A','2026-11');
-test('15000 PV pays first 70 percent and confirmed benefits', () => {
+test('15000 PV pays full 15 percent basic and confirmed benefits', () => {
   const result = calc([order]);
-  assert.equal(result.basic,1575); assert.equal(result.bonus,1200);
-  assert.equal(result.allowance,2500); assert.equal(result.support,1000); assert.equal(result.total,6275);
+  assert.equal(result.basic,2250); assert.equal(result.bonus,1200);
+  assert.equal(result.allowance,2500); assert.equal(result.support,1000); assert.equal(result.total,6950);
 });
 test('cash contributes to targets and pays 13 percent once', () => {
   const result=calc([{...order,sale_type:'cash',cash_price:5000}]);
