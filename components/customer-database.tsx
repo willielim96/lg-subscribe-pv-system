@@ -107,6 +107,7 @@ function PurchaseRow({ order: o }: { order: Order }) {
     <div className="orderhead"><strong>{o.order_number}</strong><b>{fmt(Number(o.pv))} PV</b></div>
     <p>{o.category}{o.model ? ' · ' + o.model : ''} · {status}{o.installed_on ? ' · 安装 ' + o.installed_on : ''}</p>
     <dl>{rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+    {o.notes && <p className="note">备注：{o.notes}</p>}
     <small>{agents[o.agent] || o.agent} · {o.agent}</small>
   </article>;
 }
