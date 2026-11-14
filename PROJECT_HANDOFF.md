@@ -39,7 +39,7 @@ Launch checklist (only when the owner says "go live"):
 - app/page.tsx renders components/pv-dashboard.tsx (kept thin).
 - components/: login-form, pv-dashboard (tabs, orders form and lists), order-search, commission-summary, customer-database, whatsapp-button.
 - hooks/: use-pv-tracker (auth, load/save/cancel orders), use-customer-merges (merge history).
-- lib/: pv.mjs (PV), commission.mjs (commission), customers.mjs (customer grouping, contract price), order-search.mjs (filters, CSV export), whatsapp.mjs (phone normalisation), order-mapping.mjs (app fields <-> database columns), orders.ts (agents, categories, form defaults), supabase/client.ts.
+- lib/: pv.mjs (PV), commission.mjs (commission), customers.mjs (customer grouping, contract price), order-search.mjs (order filters), whatsapp.mjs (phone normalisation), order-mapping.mjs (app fields <-> database columns), orders.ts (agents, categories, form defaults), supabase/client.ts.
 - tests/: node --test unit tests for all lib logic.
 - Agents are fixed in lib/orders.ts: LGM121099 WILLIE LIM, LGM214656 LIEU WEI TIAN.
 
@@ -74,11 +74,11 @@ Per agent, per installation month, cancelled and pending orders excluded:
 - A merged customer keeps the name and phone of the customer it was merged INTO; names from merged-in orders never overwrite it. To rename, edit the order.
 - Special Price orders: normal_monthly_fee holds the discounted fee; original_monthly_fee (optional) holds the original price and is shown in Purchase History.
 
-## 6b. Orders: notes, search and export
+## 6b. Orders: notes and search
 
-- Notes: orders.notes, editable in Add Order and Edit Order, shown on order cards, Purchase History and export.
+- Notes: orders.notes, editable in Add Order and Edit Order, shown on order cards and Purchase History.
 - Order search tab (components/order-search.tsx, lib/order-search.mjs): partial name / phone / order number, agent, status (Pending / Installed / Cancelled), date range on Key-in date or Installation date.
-- Export Excel downloads a .csv (UTF-8 with BOM so Excel shows Chinese) of the filtered orders. Cells starting with = + - @ are prefixed with ' to stop Excel formulas.
+- Export Excel: removed at the owner's request (2026-11-14). Do not add it back unless asked.
 
 ## 7. Database (Supabase)
 
@@ -99,14 +99,13 @@ Note: supabase/migrations/202611140001_initial.sql in the local folder is outdat
 
 Open Pull Requests (not merged, production unchanged):
 - PR #1 https://github.com/willielim96/lg-subscribe-pv-system/pull/1 - Commission page, WhatsApp button, Cash Buy price, blue theme.
-- PR #2 https://github.com/willielim96/lg-subscribe-pv-system/pull/2 - Customer Database, merge/undo, 15% commission, order notes, Special Price original price, order search/filter/Excel export (stacked on PR #1; merge PR #1 first). Needs migrations 0001 and 0002 on production before or together with the merge.
+- PR #2 https://github.com/willielim96/lg-subscribe-pv-system/pull/2 - Customer Database, merge/undo, 15% commission, order notes, Special Price original price, order search/filter (stacked on PR #1; merge PR #1 first). Needs migrations 0001 and 0002 on production before or together with the merge.
 
 Production (main) currently runs the first Next.js version (orders + PV only).
 
-Decided by the owner on 2026-11-14 (implemented in PR #2): 15% basic commission with no deferral; Existing+New = fee - RM10 for PV and contract; water purifier +300 PV per unit until 2026-12-31 by installation date; merged customers keep their original name; notes; search/filter/export; Special Price original price.
+Decided by the owner on 2026-11-14 (implemented in PR #2): 15% basic commission with no deferral; Existing+New = fee - RM10 for PV and contract; water purifier +300 PV per unit until 2026-12-31 by installation date; merged customers keep their original name; notes; search/filter (no Excel export); Special Price original price.
 
 Not done yet / open items:
 - Audit history (order_audit_log table exists but the app does not write to it) and agent management UI.
 - Water purifier promotion has no start date (all installs up to 2026-12-31 qualify).
-- Export is CSV (opens in Excel), not .xlsx.
 - Production Supabase: "Allow new users to sign up" is ON (strangers still cannot read data). Recommend turning it off before launch.
