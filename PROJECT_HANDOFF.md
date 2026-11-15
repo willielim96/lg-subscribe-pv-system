@@ -78,6 +78,9 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- Order search displays the result count without PV totals or per-order PV.
+- Active search results include 修改 / 安装, which opens and focuses the existing edit form for that order.
+
 - New orders require an explicit agent and product selection. Subscribe also requires contract and offer selections, including Normal price when there is no offer. Editing keeps the saved choices.
 
 - Customer names are uppercased during entry and on save. Clear the installation date before saving to put an order on the Waiting List.
