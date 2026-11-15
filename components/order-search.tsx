@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { WhatsAppButton } from './whatsapp-button';
-import { agents, fmt, type Order } from '../lib/orders';
+import { agents, type Order } from '../lib/orders';
 import { filterOrders, orderStatus } from '../lib/order-search.mjs';
 
 const statusLabels: Record<string, string> = { pending: 'Pending', installed: 'Installed', cancelled: '已取消' };
@@ -16,7 +16,6 @@ export function OrderSearch({ orders, loaded, busy, onEditOrder }: {
   const [filters, setFilters] = useState(blank);
   const set = (key: keyof typeof blank, value: string) => setFilters({ ...filters, [key]: value });
   const results = filterOrders(orders, filters) as Order[];
-  const totalPV = results.reduce((sum, o) => sum + Number(o.pv), 0);
 
   if (!loaded) return <section className="panel">正在读取订单…</section>;
   return <section className="panel order-search">
@@ -31,10 +30,10 @@ export function OrderSearch({ orders, loaded, busy, onEditOrder }: {
       <label>从<input type="date" value={filters.from} onChange={e => set('from', e.target.value)} /></label>
       <label>到<input type="date" value={filters.to} onChange={e => set('to', e.target.value)} /></label>
     </div>
-    <div className="search-summary"><span>找到 {results.length} 张订单 · {fmt(totalPV)} PV</span>
+    <div className="search-summary"><span>找到 {results.length} 张订单</span>
       <span><button className="secondary" type="button" onClick={() => setFilters(blank)}>清除筛选</button></span></div>
     <div className="orderlist">{!results.length ? <p className="empty">没有符合的订单</p> : results.map(o => <article className="order" key={o.id}>
-      <div className="orderhead"><strong>{o.customer}</strong><b>{fmt(Number(o.pv))} PV</b></div>
+      <div className="orderhead"><strong>{o.customer}</strong></div>
       <p>{o.order_number} · {o.category} {o.model} · {statusLabels[orderStatus(o)]}{o.installed_on ? ' · 安装 ' + o.installed_on : ''}</p>
       {o.notes && <p className="note">备注：{o.notes}</p>}
       <small>{agents[o.agent] || o.agent} · Key in {new Date(o.created_at).toLocaleDateString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' })}</small>
