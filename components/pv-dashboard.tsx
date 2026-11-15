@@ -47,6 +47,7 @@ export function PVDashboard() {
       <div className="pair"><label>电话<input type="tel" name="customer-phone" autoComplete="off" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></label><label>Order Number<input
           required
           name="order-number"
+          autoCapitalize="characters"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
@@ -54,7 +55,17 @@ export function PVDashboard() {
           onKeyDown={e => {
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault();
           }}
-          onChange={e => setForm({ ...form, order_number: e.target.value })}
+          onChange={e => {
+            const input = e.currentTarget;
+            const value = input.value.replace(/[a-z]/g, letter => letter.toUpperCase());
+            if (input.value !== value) {
+              const start = input.selectionStart;
+              const end = input.selectionEnd;
+              input.value = value;
+              input.setSelectionRange(start, end);
+            }
+            setForm(previous => ({ ...previous, order_number: value }));
+          }}
         /></label></div>
       <label>Agent<select required value={form.agent} onChange={e => setForm({ ...form, agent: e.target.value })}><option value="" disabled>请选择 Agent</option>{Object.entries(agents).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <div className="pair"><label>产品<select required value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}><option value="" disabled>请选择产品</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label>型号<input value={form.model} onChange={e => setForm({ ...form, model: e.target.value })} /></label></div>
