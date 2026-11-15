@@ -5,14 +5,18 @@ const form = { customer: ' Test ', phone: '', order_number: ' abc ', agent: 'LGM
 test('writes database names and valid installed status', () => {
   const row = toOrderRow(form);
   assert.equal(row.agent_code, form.agent);
-  assert.equal(row.customer_name, 'Test');
+  assert.equal(row.customer_name, 'TEST');
   assert.equal(row.order_number, 'ABC');
   assert.equal(row.status, 'Installed');
   assert.equal('agent' in row, false);
   assert.equal(fromOrderRow(row).pv, 1500);
 });
 test('pending, cancellation and cash preserve scoring', () => {
-  assert.equal(toOrderRow({...form, installed_on: ''}).installation_date, null);
+  const pending = toOrderRow({ ...form, customer: ' 陈 Xiao ', installed_on: '' });
+  assert.equal(pending.customer_name, '陈 XIAO');
+  assert.equal(pending.installation_date, null);
+  assert.equal(pending.status, 'Pending');
+  assert.equal(fromOrderRow(pending).pv, 0);
   assert.equal(fromOrderRow({...toOrderRow(form), removed_at: '2026-11-14'}).pv, 0);
   assert.equal(fromOrderRow(toOrderRow({...form, sale_type: 'cash', manual_pv: 800})).pv, 800);
 });
