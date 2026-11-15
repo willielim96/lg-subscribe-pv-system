@@ -7,7 +7,12 @@ import { filterOrders, orderStatus } from '../lib/order-search.mjs';
 const statusLabels: Record<string, string> = { pending: 'Pending', installed: 'Installed', cancelled: '已取消' };
 const blank = { text: '', agent: '', status: '', dateField: 'keyed', from: '', to: '' };
 
-export function OrderSearch({ orders, loaded }: { orders: Order[]; loaded: boolean }) {
+export function OrderSearch({ orders, loaded, busy, onEditOrder }: {
+  orders: Order[];
+  loaded: boolean;
+  busy: boolean;
+  onEditOrder: (order: Order) => void;
+}) {
   const [filters, setFilters] = useState(blank);
   const set = (key: keyof typeof blank, value: string) => setFilters({ ...filters, [key]: value });
   const results = filterOrders(orders, filters) as Order[];
@@ -33,7 +38,10 @@ export function OrderSearch({ orders, loaded }: { orders: Order[]; loaded: boole
       <p>{o.order_number} · {o.category} {o.model} · {statusLabels[orderStatus(o)]}{o.installed_on ? ' · 安装 ' + o.installed_on : ''}</p>
       {o.notes && <p className="note">备注：{o.notes}</p>}
       <small>{agents[o.agent] || o.agent} · Key in {new Date(o.created_at).toLocaleDateString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' })}</small>
-      <div className="actions"><WhatsAppButton phone={o.phone} /></div>
+      <div className="actions">
+        <WhatsAppButton phone={o.phone} />
+        {!o.cancelled && <button className="secondary" type="button" disabled={busy} onClick={() => onEditOrder(o)}>修改 / 安装</button>}
+      </div>
     </article>)}</div>
   </section>;
 }
