@@ -78,3 +78,12 @@ test('partial search by name, phone and order number', () => {
   assert.equal(searchCustomers(list, '60191112222').length, 1);
   assert.equal(searchCustomers(list, '').length, 2);
 });
+
+test('permanently cancelled orders are hidden without breaking customer merges', () => {
+  const target = { id: 'target', customer: 'Target', phone: '0123456789', order_number: 'OLD', cancelled: true, permanently_cancelled: true };
+  const active = { id: 'other', customer: 'Other', phone: '0133456789', order_number: 'NEW' };
+  assert.deepEqual(buildCustomers([target]), []);
+  const [customer] = buildCustomers([target, active], [{ from_order_id: active.id, into_order_id: target.id }]);
+  assert.equal(customer.name, 'Target');
+  assert.deepEqual(customer.orders, [active]);
+});
