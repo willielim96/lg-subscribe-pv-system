@@ -45,13 +45,13 @@ export function usePVTracker() {
   }
   useEffect(() => { if (signedIn && db) void refresh(db); }, [signedIn, db]); // Refresh after authentication.
 
-  const active = orders.filter(o => !o.cancelled && !o.permanently_cancelled && o.agent === agent);
+  const active = orders.filter(o => !o.cancelled && o.agent === agent);
   const installed = active.filter(o => o.installed_on?.startsWith(month));
   const total = installed.reduce((sum, o) => sum + Number(o.pv), 0);
   const waiting = active.filter(o => !o.installed_on);
   const creditPV = installed.reduce((sum, order) => sum + (order.is_credit ? Number(order.pv) : 0), 0);
   const credit = active.filter(o => o.is_credit).sort(compareCreditAge);
-  const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
+  const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && !o.permanently_cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
 
   async function save(e: React.FormEvent) {
     e.preventDefault(); if (!db) return;
