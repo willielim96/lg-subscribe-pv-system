@@ -78,7 +78,7 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
-- Credit is an independent flag. Active Credit orders appear in their own tab, for the selected agent across months. Removing the flag returns the order to its usual list. Credit does not affect PV or commissions. The new flag defaults to false and leaves existing notes intact.
+- Credit is an independent flag. Active Credit orders appear in their own tab, for the selected agent across months. Removing the flag returns the order to its usual list. Approve clears Credit and opens the installation month, or Waiting List if no date is set. Reject cancels the order and opens 已取消; restoring returns it to Credit. A Credit flag itself does not affect PV or commissions. The new flag defaults to false and leaves existing notes intact.
 
 - Order search displays the result count without PV totals or per-order PV.
 - Active search results include 修改 / 安装, which opens and focuses the existing edit form for that order.

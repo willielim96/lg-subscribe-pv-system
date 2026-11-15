@@ -68,14 +68,34 @@ export function usePVTracker() {
     }
     setBusy(false);
   }
-  async function toggle(o: Order) {
-    if (!db || !window.confirm(o.cancelled ? '恢复这张订单？' : '取消这张订单？该订单的 PV 会从原月份移除。')) return;
+  async function approveCredit(order: Order) {
+    if (!db || busy || order.cancelled || !order.is_credit) return;
+    setBusy(true);
+    setMessage('');
+    const { data, error } = await db.from('orders').update({ is_credit: false })
+      .eq('id', order.id).is('removed_at', null).eq('is_credit', true).select('installation_date').single();
+    if (error) setMessage(error.message);
+    else {
+      await refresh();
+      setAgent(order.agent);
+      setTab(data?.installation_date ? 'orders' : 'waiting');
+      if (data?.installation_date) setMonth(data.installation_date.slice(0, 7));
+    }
+    setBusy(false);
+  }
+
+  async function toggle(o: Order, rejectCredit = false) {
+    if (!db || busy || (rejectCredit && (o.cancelled || !o.is_credit)) || (!rejectCredit && !window.confirm(o.cancelled ? '恢复这张订单？' : '取消这张订单？该订单的 PV 会从原月份移除。'))) return;
     setBusy(true);
     const { error } = await db.from('orders').update({ removed_at: o.cancelled ? null : new Date().toISOString() }).eq('id', o.id);
-    if (error) setMessage(error.message); else await refresh();
+    if (error) setMessage(error.message);
+    else {
+      await refresh();
+      if (rejectCredit) setTab('cancelled');
+    }
     setBusy(false);
   }
 
 
-  return { orders, db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, visible, refresh, save, toggle };
+  return { orders, db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, visible, refresh, save, toggle, approveCredit };
 }
