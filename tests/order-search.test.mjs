@@ -28,3 +28,10 @@ test('agent, status and date filters', () => {
   assert.equal(ids(filterOrders(orders, { dateField: 'installed', from: '2026-11-01' })), '1,3');
   assert.equal(ids(filterOrders(orders, { dateField: 'installed', to: '2026-11-05' })), '');
 });
+
+test('permanently cancelled orders are excluded from all and cancelled searches', () => {
+  const records = [...orders, { ...base, id: '4', order_number: 'LG-PERM', cancelled: true, permanently_cancelled: true }];
+  assert.equal(ids(filterOrders(records, {})), '1,2,3');
+  assert.equal(ids(filterOrders(records, { status: 'cancelled' })), '3');
+  assert.deepEqual(filterOrders(records, { text: 'LG-PERM' }), []);
+});
