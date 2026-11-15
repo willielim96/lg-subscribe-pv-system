@@ -78,6 +78,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- New orders require an explicit agent and product selection. Subscribe also requires contract and offer selections, including Normal price when there is no offer. Editing keeps the saved choices.
+
 - Customer names are uppercased during entry and on save. Clear the installation date before saving to put an order on the Waiting List.
 
 - Order Number disables browser completion and ignores Enter from the field so a scanner suffix or accidental Enter does not submit the form. Tab and the Save button still work.
