@@ -14,7 +14,7 @@ const views = [['orders', 'Orders / PV'], ['search', '订单查询'], ['commissi
 export function PVDashboard() {
   const tracker = usePVTracker();
   const [view, setView] = useState('orders');
-  const { db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount, creditPV, visible, refresh, save, toggle, approveCredit } = tracker;
+  const { db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount, creditPV, visible, refresh, save, toggle, approveCredit, permanentlyCancel } = tracker;
   const editHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (view === 'orders' && editing) editHeading.current?.focus();
@@ -71,7 +71,7 @@ export function PVDashboard() {
       <section className="panel"><nav>{[['orders', '本月已安装'], ['waiting', 'Waiting List'], ['credit', 'Credit'], ['cancelled', '已取消']].map(([key, label]) => <button key={key} className={tab === key ? 'selected' : 'secondary'} onClick={() => setTab(key)}>{label}</button>)}</nav><div className="orderlist">{!loaded ? <p className="empty">正在读取云端订单…</p> : !visible.length ? <div className="empty"><h3>这里还没有订单</h3><p>新增第一张订单，开始记录业绩。</p></div> : visible.map(o => { const days = tab === 'credit' ? creditWaitDays(o.created_at) : null; return <article className="order" key={o.id}><div className="orderhead"><strong>{o.customer}</strong><b>{fmt(Number(o.pv))} PV</b></div><p>{o.order_number} · {o.category} {o.model}</p>{o.notes && <p className="note">备注：{o.notes}</p>}<small>{o.installed_on ? 'Installed · ' + o.installed_on : 'Pending · Waiting List'} · Key in {new Date(o.created_at).toLocaleDateString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' })}</small>{days !== null && <p>Credit · {days === 0 ? '今天 key 入' : '已等 ' + days + ' 天'}（按 key 单日期）</p>}<div className="actions"><WhatsAppButton phone={o.phone} />{o.phone && <a href={'tel:' + o.phone.replace(/[^+\d]/g, '')}>联系顾客</a>}{!o.cancelled && <button className="secondary" disabled={busy} onClick={() => editOrder(o)}>修改 / 安装</button>}{tab === 'credit' ? <>
         <button type="button" disabled={busy} onClick={() => void approveCredit(o)}>Approve</button>
         <button type="button" className="secondary" disabled={busy} onClick={() => void toggle(o, true)}>Reject</button>
-      </> : <button className="secondary" disabled={busy} onClick={() => void toggle(o)}>{o.cancelled ? '恢复' : '取消订单'}</button>}</div></article>; })}</div></section></div>
+      </> : <button className="secondary" disabled={busy} onClick={() => void toggle(o)}>{o.cancelled ? '恢复' : '取消订单'}</button>}{tab === 'cancelled' && <button type="button" className="secondary" disabled={busy} onClick={() => void permanentlyCancel(o)}>永久取消</button>}</div></article>; })}</div></section></div>
     </>}
     <footer>LG PV Tracker · 订单、计分、佣金与顾客资料</footer>
   </main>;
