@@ -66,6 +66,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6. Customer Database rules (lib/customers.mjs)
 
+- Customer list cards show the agent and active order count for each agent associated with the customer.
+
 - Customers are derived from orders on the fly; no customer table, no duplicated customer data.
 - Same name + same phone = one customer. Same name + different phone = different. Different names + same phone = flagged for the owner, never auto-merged. No phone = never merged.
 - Phones normalised: 0xx -> 60xx (Malaysia), 8-digit 6/8/9xxxxxxx -> 65 (Singapore), +60/+65 kept.
