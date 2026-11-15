@@ -48,7 +48,8 @@ export function usePVTracker() {
   const installed = active.filter(o => o.installed_on?.startsWith(month));
   const total = installed.reduce((sum, o) => sum + Number(o.pv), 0);
   const waiting = active.filter(o => !o.installed_on);
-  const visible = tab === 'waiting' ? waiting : tab === 'cancelled' ? orders.filter(o => o.cancelled && o.agent === agent) : installed;
+  const credit = active.filter(o => o.is_credit);
+  const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
 
   async function save(e: React.FormEvent) {
     e.preventDefault(); if (!db) return;
@@ -56,7 +57,15 @@ export function usePVTracker() {
     const payload = toOrderRow(form);
     const { error } = editing ? await db.from('orders').update(payload).eq('id', editing) : await db.from('orders').insert(payload);
     if (error) setMessage(error.code === '23505' ? 'Order Number 已存在，请勿重复输入。' : error.message);
-    else { setMessage('订单已保存到云端。'); setForm(empty); setEditing(null); await refresh(); }
+    else {
+      const wasCredit = orders.some(order => order.id === editing && order.is_credit);
+      if (form.is_credit || wasCredit) {
+        setAgent(form.agent);
+        setTab(form.is_credit ? 'credit' : form.installed_on ? 'orders' : 'waiting');
+        if (!form.is_credit && form.installed_on) setMonth(form.installed_on.slice(0, 7));
+      }
+      setMessage('订单已保存到云端。'); setForm(empty); setEditing(null); await refresh();
+    }
     setBusy(false);
   }
   async function toggle(o: Order) {

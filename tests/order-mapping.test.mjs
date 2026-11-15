@@ -30,3 +30,12 @@ test('notes and special original price round-trip', () => {
   assert.equal(toOrderRow({ ...form, notes: '   ' }).notes, null);
   assert.deepEqual([fromOrderRow({ ...special, original_monthly_fee: null, notes: null }).original_fee, fromOrderRow({ ...special, notes: null }).notes], ['', '']);
 });
+
+test('Credit flag can be set and cleared without changing installation or PV', () => {
+  const marked = fromOrderRow(toOrderRow({ ...form, is_credit: true }));
+  const cleared = fromOrderRow(toOrderRow({ ...form, is_credit: false }));
+  assert.equal(marked.is_credit, true);
+  assert.equal(cleared.is_credit, false);
+  assert.equal(marked.installed_on, cleared.installed_on);
+  assert.equal(marked.pv, cleared.pv);
+});
