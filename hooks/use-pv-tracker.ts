@@ -48,6 +48,7 @@ export function usePVTracker() {
   const installed = active.filter(o => o.installed_on?.startsWith(month));
   const total = installed.reduce((sum, o) => sum + Number(o.pv), 0);
   const waiting = active.filter(o => !o.installed_on);
+  const creditPV = installed.reduce((sum, order) => sum + (order.is_credit ? Number(order.pv) : 0), 0);
   const credit = active.filter(o => o.is_credit);
   const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
 
@@ -97,5 +98,5 @@ export function usePVTracker() {
   }
 
 
-  return { orders, db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount: credit.length, visible, refresh, save, toggle, approveCredit };
+  return { orders, db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount: credit.length, creditPV, visible, refresh, save, toggle, approveCredit };
 }
