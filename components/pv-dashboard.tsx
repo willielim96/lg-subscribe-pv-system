@@ -13,7 +13,7 @@ const views = [['orders', 'Orders / PV'], ['search', '订单查询'], ['commissi
 export function PVDashboard() {
   const tracker = usePVTracker();
   const [view, setView] = useState('orders');
-  const { db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, visible, refresh, save, toggle, approveCredit } = tracker;
+  const { db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount, visible, refresh, save, toggle, approveCredit } = tracker;
   const editHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (view === 'orders' && editing) editHeading.current?.focus();
@@ -36,7 +36,7 @@ export function PVDashboard() {
     <div className="toolbar"><select aria-label="Agent" value={agent} onChange={e => setAgent(e.target.value)}>{Object.entries(agents).map(([id, name]) => <option key={id} value={id}>{name} · {id}</option>)}</select><input aria-label="业绩月份" type="month" value={month} onChange={e => setMonth(e.target.value)} /><button className="secondary" onClick={() => void refresh()}>刷新</button></div>
     <nav className="view-tabs">{views.map(([key, label]) => <button key={key} onClick={() => setView(key)} className={view === key ? '' : 'secondary'}>{label}</button>)}</nav>
     {view === 'commission' ? <CommissionSummary orders={tracker.orders} agent={agent} month={month} loaded={loaded} /> : view === 'customers' ? <CustomerDatabase orders={tracker.orders} loaded={loaded} db={db} /> : view === 'search' ? <OrderSearch orders={tracker.orders} loaded={loaded} busy={busy} onEditOrder={editOrder} /> : <>
-    <section className="stats"><article className="hero"><small>MONTHLY PERFORMANCE</small><h2>{loaded ? fmt(total) : '—'} <span>PV</span></h2><p>{month} · {agents[agent]}</p></article><article><small>已安装订单</small><h2>{loaded ? installed.length : '—'}</h2><p>计入当前月份</p></article><article><small>Waiting List</small><h2>{loaded ? waiting.length : '—'}</h2><p>等待安装 · 暂不计分</p></article></section>
+    <section className="stats"><article className="hero"><small>MONTHLY PERFORMANCE</small><h2>{loaded ? fmt(total) : '—'} <span>PV</span></h2><p>{month} · {agents[agent]}</p></article><article><small>已安装订单</small><h2>{loaded ? installed.length : '—'}</h2><p>计入当前月份</p></article><article><small>Waiting List</small><h2>{loaded ? waiting.length : '—'}</h2><p>等待安装 · 暂不计分</p></article><article><small>Credit 订单</small><h2>{loaded ? creditCount : '—'}</h2><p>当前 Agent · 不限月份</p></article></section>
     <section className="targets">{[15000, 22100].map(goal => <article key={goal}><div><strong>{fmt(goal)} PV 目标</strong><span>{loaded ? total >= goal ? '已达标 ✓' : '还差 ' + fmt(goal - total) : '加载中'}</span></div><progress max={goal} value={total} /></article>)}</section>
     <p className="message" role="status">{message}</p>
     <div className="workspace"><section className="panel"><h2 ref={editHeading} tabIndex={-1}>{editing ? '修改订单' : '新增订单'}</h2><p className="muted">一张 Order Number 对应一台产品</p><form onSubmit={save}>
