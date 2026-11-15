@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { getSupabaseClient } from '../lib/supabase/client';
 import { empty, monthNow, type Order } from '../lib/orders';
+import { compareCreditAge } from '../lib/credit-preview.mjs';
 import { fromOrderRow, toOrderRow } from '../lib/order-mapping.mjs';
 export function usePVTracker() {
   const [db, setDb] = useState<SupabaseClient | null>(null);
@@ -49,7 +50,7 @@ export function usePVTracker() {
   const total = installed.reduce((sum, o) => sum + Number(o.pv), 0);
   const waiting = active.filter(o => !o.installed_on);
   const creditPV = installed.reduce((sum, order) => sum + (order.is_credit ? Number(order.pv) : 0), 0);
-  const credit = active.filter(o => o.is_credit);
+  const credit = active.filter(o => o.is_credit).sort(compareCreditAge);
   const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
 
   async function save(e: React.FormEvent) {
