@@ -11,6 +11,17 @@ import { usePVTracker } from '../hooks/use-pv-tracker';
 import { InstallationDateField } from './installation-date-field';
 import { LoginForm } from './login-form';
 const views = [['orders', 'Orders / PV'], ['search', '订单查询'], ['commission', 'Commission'], ['customers', 'Customers']];
+function uppercaseInput(input: HTMLInputElement) {
+  const value = input.value.replace(/[a-z]/g, letter => letter.toUpperCase());
+  if (input.value !== value) {
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    input.value = value;
+    input.setSelectionRange(start, end);
+  }
+  return value;
+}
+
 export function PVDashboard() {
   const tracker = usePVTracker();
   const [view, setView] = useState('orders');
@@ -56,19 +67,15 @@ export function PVDashboard() {
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault();
           }}
           onChange={e => {
-            const input = e.currentTarget;
-            const value = input.value.replace(/[a-z]/g, letter => letter.toUpperCase());
-            if (input.value !== value) {
-              const start = input.selectionStart;
-              const end = input.selectionEnd;
-              input.value = value;
-              input.setSelectionRange(start, end);
-            }
+            const value = uppercaseInput(e.currentTarget);
             setForm(previous => ({ ...previous, order_number: value }));
           }}
         /></label></div>
       <label>Agent<select required value={form.agent} onChange={e => setForm({ ...form, agent: e.target.value })}><option value="" disabled>请选择 Agent</option>{Object.entries(agents).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
-      <div className="pair"><label>产品<select required value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}><option value="" disabled>请选择产品</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label>型号<input value={form.model} onChange={e => setForm({ ...form, model: e.target.value })} /></label></div>
+      <div className="pair"><label>产品<select required value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}><option value="" disabled>请选择产品</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label>型号<input autoCapitalize="characters" value={form.model} onChange={e => {
+        const value = uppercaseInput(e.currentTarget);
+        setForm(previous => ({ ...previous, model: value }));
+      }} /></label></div>
       <label>购买方式<select value={form.sale_type} onChange={e => setForm({ ...form, sale_type: e.target.value })}><option value="subscribe">Subscribe</option><option value="cash">Cash Buy</option></select></label>
       {form.sale_type === 'cash' ? <><label>手填 PV<input type="number" min="0" step="0.01" required value={form.manual_pv} onChange={e => setForm({ ...form, manual_pv: Number(e.target.value) })} /></label><label>Cash Buy original price RM<input required type="number" min="0.01" step="0.01" value={form.cash_price} onChange={e => setForm({ ...form, cash_price: e.target.value === '' ? '' : Number(e.target.value) })} /></label></> : <>
         <div className="pair"><label>合约<select required value={form.years} onChange={e => setForm({ ...form, years: e.target.value === '' ? '' : Number(e.target.value) })}><option value="" disabled>请选择合约</option><option value={5}>5 年 × 17</option><option value={7}>7 年 × 20</option></select></label><label>{form.offer === 'special' ? '优惠后月费 RM' : '正常月费 RM'}<input required type="number" min={form.offer === 'bundle' ? 10 : 0} step="0.01" value={form.monthly_fee} onChange={e => setForm({ ...form, monthly_fee: e.target.value === '' ? '' : Number(e.target.value) })} /></label></div>
