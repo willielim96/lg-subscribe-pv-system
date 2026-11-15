@@ -78,6 +78,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- The order form uppercases English letters in Order Number and Model during entry and paste, preserving the cursor position.
+
 - The cancelled list offers confirmed permanent cancellation. Finalized orders leave the recoverable list and remain in order history. Database constraints prevent restoring them.
 
 - The dashboard targets also show installed PV excluding waiting Credit. Credit cards show Malaysia calendar days since key-in and sort oldest first.
