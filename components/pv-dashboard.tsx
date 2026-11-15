@@ -7,6 +7,7 @@ import { WhatsAppButton } from './whatsapp-button';
 import { calculatePV } from '../lib/pv.mjs';
 import { agents, categories, empty, fmt } from '../lib/orders';
 import { usePVTracker } from '../hooks/use-pv-tracker';
+import { InstallationDateField } from './installation-date-field';
 import { LoginForm } from './login-form';
 const views = [['orders', 'Orders / PV'], ['search', '订单查询'], ['commission', 'Commission'], ['customers', 'Customers']];
 export function PVDashboard() {
@@ -26,7 +27,7 @@ export function PVDashboard() {
     <section className="targets">{[15000, 22100].map(goal => <article key={goal}><div><strong>{fmt(goal)} PV 目标</strong><span>{loaded ? total >= goal ? '已达标 ✓' : '还差 ' + fmt(goal - total) : '加载中'}</span></div><progress max={goal} value={total} /></article>)}</section>
     <p className="message" role="status">{message}</p>
     <div className="workspace"><section className="panel"><h2>{editing ? '修改订单' : '新增订单'}</h2><p className="muted">一张 Order Number 对应一台产品</p><form onSubmit={save}>
-      <label>顾客姓名<input required value={form.customer} onChange={e => setForm({ ...form, customer: e.target.value })} /></label>
+      <label>顾客姓名<input required value={form.customer} onChange={e => setForm({ ...form, customer: e.target.value.toUpperCase() })} /></label>
       <div className="pair"><label>电话<input type="tel" name="customer-phone" autoComplete="off" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></label><label>Order Number<input
           required
           name="order-number"
@@ -46,7 +47,7 @@ export function PVDashboard() {
         <div className="pair"><label>合约<select value={form.years} onChange={e => setForm({ ...form, years: Number(e.target.value) })}><option value={5}>5 年 × 17</option><option value={7}>7 年 × 20</option></select></label><label>{form.offer === 'special' ? '优惠后月费 RM' : '正常月费 RM'}<input required type="number" min={form.offer === 'bundle' ? 10 : 0} step="0.01" value={form.monthly_fee} onChange={e => setForm({ ...form, monthly_fee: e.target.value === '' ? '' : Number(e.target.value) })} /></label></div>
         <label>优惠<select value={form.offer} onChange={e => setForm({ ...form, offer: e.target.value })}><option value="normal">Normal price</option><option value="half">首 9 个月半价 · PV 用正常月费</option><option value="special">Special price</option><option value="bundle">Existing + New / New + New · 减 RM10</option></select></label>
         {form.offer === 'special' && <label>原价月费 RM（Original Monthly Price）<input type="number" min="0" step="0.01" placeholder="优惠前的正常月费" value={form.original_fee} onChange={e => setForm({ ...form, original_fee: e.target.value === '' ? '' : Number(e.target.value) })} /></label>}</>}
-      <label>安装日期 · 留空为 Waiting List<input type="date" value={form.installed_on} onChange={e => setForm({ ...form, installed_on: e.target.value })} /></label>
+      <InstallationDateField value={form.installed_on} onChange={installed_on => setForm({ ...form, installed_on })} />
       <label>备注<textarea rows={3} maxLength={1000} placeholder="例如：顾客方便安装的时间" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} /></label>
       <div className="estimate">本单计分 <strong>{fmt(calculatePV(form))} PV</strong></div><button disabled={busy}>{busy ? '保存中…' : editing ? '保存修改' : '保存订单'}</button>{editing && <button className="secondary" type="button" onClick={() => { setEditing(null); setForm(empty); }}>取消修改</button>}
     </form></section>

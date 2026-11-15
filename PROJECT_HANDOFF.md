@@ -78,6 +78,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- Customer names are uppercased during entry and on save. Clear the installation date before saving to put an order on the Waiting List.
+
 - Order Number disables browser completion and ignores Enter from the field so a scanner suffix or accidental Enter does not submit the form. Tab and the Save button still work.
 
 - Notes: orders.notes, editable in Add Order and Edit Order, shown on order cards and Purchase History.
