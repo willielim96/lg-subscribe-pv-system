@@ -78,7 +78,7 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
-- The order form uppercases English letters in Order Number during entry and paste, preserving the cursor position.
+- The order form uppercases English letters in Order Number and Model during entry and paste, preserving the cursor position.
 
 - The dashboard targets also show installed PV excluding waiting Credit. Credit cards show Malaysia calendar days since key-in and sort oldest first.
 
