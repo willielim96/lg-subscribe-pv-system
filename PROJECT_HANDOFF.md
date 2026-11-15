@@ -78,6 +78,10 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- The order form uppercases English letters in Order Number and Model during entry and paste, preserving the cursor position.
+
+- The cancelled list offers confirmed permanent cancellation. Finalized orders leave the recoverable list, customer cards, purchase history and order search. Customers with no remaining orders are hidden. Underlying records and merge links are preserved. Database constraints prevent restoring them.
+
 - The dashboard targets also show installed PV excluding waiting Credit. Credit cards show Malaysia calendar days since key-in and sort oldest first.
 
 - The dashboard shows the number of active orders in the selected agent's Credit tab across all months. The targets row shows waiting Credit PV for the selected agent and installation month as a subset of installed PV. Credit is an independent flag. Active Credit orders appear in their own tab, for the selected agent across months. Removing the flag returns the order to its usual list. Approve clears Credit and opens the installation month, or Waiting List if no date is set. Reject cancels the order and opens 已取消; restoring returns it to Credit. A Credit flag itself does not affect PV or commissions. The new flag defaults to false and leaves existing notes intact.

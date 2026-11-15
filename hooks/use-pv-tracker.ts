@@ -51,7 +51,7 @@ export function usePVTracker() {
   const waiting = active.filter(o => !o.installed_on);
   const creditPV = installed.reduce((sum, order) => sum + (order.is_credit ? Number(order.pv) : 0), 0);
   const credit = active.filter(o => o.is_credit).sort(compareCreditAge);
-  const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
+  const visible = tab === 'credit' ? credit : tab === 'waiting' ? waiting.filter(o => !o.is_credit) : tab === 'cancelled' ? orders.filter(o => o.cancelled && !o.permanently_cancelled && o.agent === agent) : installed.filter(o => !o.is_credit);
 
   async function save(e: React.FormEvent) {
     e.preventDefault(); if (!db) return;
@@ -86,6 +86,29 @@ export function usePVTracker() {
     setBusy(false);
   }
 
+  async function permanentlyCancel(order: Order) {
+    if (!db || busy || !order.cancelled || order.permanently_cancelled) return;
+    if (!window.confirm('确定永久取消订单 ' + order.order_number + '？之后无法恢复。')) return;
+
+    setBusy(true);
+    setMessage('');
+    try {
+      const { error } = await db.from('orders')
+        .update({ permanently_cancelled_at: new Date().toISOString() })
+        .eq('id', order.id).not('removed_at', 'is', null)
+        .is('permanently_cancelled_at', null).select('id').single();
+      if (error) setMessage('无法永久取消，请刷新后再试。');
+      else {
+        setMessage('订单已永久取消。');
+        await refresh();
+      }
+    } catch {
+      setMessage('无法确认结果，请刷新订单列表。');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function toggle(o: Order, rejectCredit = false) {
     if (!db || busy || (rejectCredit && (o.cancelled || !o.is_credit)) || (!rejectCredit && !window.confirm(o.cancelled ? '恢复这张订单？' : '取消这张订单？该订单的 PV 会从原月份移除。'))) return;
     setBusy(true);
@@ -99,5 +122,5 @@ export function usePVTracker() {
   }
 
 
-  return { orders, db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount: credit.length, creditPV, visible, refresh, save, toggle, approveCredit };
+  return { orders, db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount: credit.length, creditPV, visible, refresh, save, toggle, approveCredit, permanentlyCancel };
 }

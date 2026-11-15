@@ -11,10 +11,21 @@ import { usePVTracker } from '../hooks/use-pv-tracker';
 import { InstallationDateField } from './installation-date-field';
 import { LoginForm } from './login-form';
 const views = [['orders', 'Orders / PV'], ['search', '订单查询'], ['commission', 'Commission'], ['customers', 'Customers']];
+function uppercaseInput(input: HTMLInputElement) {
+  const value = input.value.replace(/[a-z]/g, letter => letter.toUpperCase());
+  if (input.value !== value) {
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    input.value = value;
+    input.setSelectionRange(start, end);
+  }
+  return value;
+}
+
 export function PVDashboard() {
   const tracker = usePVTracker();
   const [view, setView] = useState('orders');
-  const { db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount, creditPV, visible, refresh, save, toggle, approveCredit } = tracker;
+  const { db, ready, signedIn, email, setEmail, password, setPassword, form, setForm, editing, setEditing, month, setMonth, agent, setAgent, tab, setTab, message, setMessage, busy, setBusy, loaded, installed, total, waiting, creditCount, creditPV, visible, refresh, save, toggle, approveCredit, permanentlyCancel } = tracker;
   const editHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (view === 'orders' && editing) editHeading.current?.focus();
@@ -47,6 +58,7 @@ export function PVDashboard() {
       <div className="pair"><label>电话<input type="tel" name="customer-phone" autoComplete="off" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></label><label>Order Number<input
           required
           name="order-number"
+          autoCapitalize="characters"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
@@ -54,10 +66,16 @@ export function PVDashboard() {
           onKeyDown={e => {
             if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault();
           }}
-          onChange={e => setForm({ ...form, order_number: e.target.value })}
+          onChange={e => {
+            const value = uppercaseInput(e.currentTarget);
+            setForm(previous => ({ ...previous, order_number: value }));
+          }}
         /></label></div>
       <label>Agent<select required value={form.agent} onChange={e => setForm({ ...form, agent: e.target.value })}><option value="" disabled>请选择 Agent</option>{Object.entries(agents).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
-      <div className="pair"><label>产品<select required value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}><option value="" disabled>请选择产品</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label>型号<input value={form.model} onChange={e => setForm({ ...form, model: e.target.value })} /></label></div>
+      <div className="pair"><label>产品<select required value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}><option value="" disabled>请选择产品</option>{categories.map(c => <option key={c}>{c}</option>)}</select></label><label>型号<input autoCapitalize="characters" value={form.model} onChange={e => {
+        const value = uppercaseInput(e.currentTarget);
+        setForm(previous => ({ ...previous, model: value }));
+      }} /></label></div>
       <label>购买方式<select value={form.sale_type} onChange={e => setForm({ ...form, sale_type: e.target.value })}><option value="subscribe">Subscribe</option><option value="cash">Cash Buy</option></select></label>
       {form.sale_type === 'cash' ? <><label>手填 PV<input type="number" min="0" step="0.01" required value={form.manual_pv} onChange={e => setForm({ ...form, manual_pv: Number(e.target.value) })} /></label><label>Cash Buy original price RM<input required type="number" min="0.01" step="0.01" value={form.cash_price} onChange={e => setForm({ ...form, cash_price: e.target.value === '' ? '' : Number(e.target.value) })} /></label></> : <>
         <div className="pair"><label>合约<select required value={form.years} onChange={e => setForm({ ...form, years: e.target.value === '' ? '' : Number(e.target.value) })}><option value="" disabled>请选择合约</option><option value={5}>5 年 × 17</option><option value={7}>7 年 × 20</option></select></label><label>{form.offer === 'special' ? '优惠后月费 RM' : '正常月费 RM'}<input required type="number" min={form.offer === 'bundle' ? 10 : 0} step="0.01" value={form.monthly_fee} onChange={e => setForm({ ...form, monthly_fee: e.target.value === '' ? '' : Number(e.target.value) })} /></label></div>
@@ -71,7 +89,7 @@ export function PVDashboard() {
       <section className="panel"><nav>{[['orders', '本月已安装'], ['waiting', 'Waiting List'], ['credit', 'Credit'], ['cancelled', '已取消']].map(([key, label]) => <button key={key} className={tab === key ? 'selected' : 'secondary'} onClick={() => setTab(key)}>{label}</button>)}</nav><div className="orderlist">{!loaded ? <p className="empty">正在读取云端订单…</p> : !visible.length ? <div className="empty"><h3>这里还没有订单</h3><p>新增第一张订单，开始记录业绩。</p></div> : visible.map(o => { const days = tab === 'credit' ? creditWaitDays(o.created_at) : null; return <article className="order" key={o.id}><div className="orderhead"><strong>{o.customer}</strong><b>{fmt(Number(o.pv))} PV</b></div><p>{o.order_number} · {o.category} {o.model}</p>{o.notes && <p className="note">备注：{o.notes}</p>}<small>{o.installed_on ? 'Installed · ' + o.installed_on : 'Pending · Waiting List'} · Key in {new Date(o.created_at).toLocaleDateString('en-MY', { timeZone: 'Asia/Kuala_Lumpur' })}</small>{days !== null && <p>Credit · {days === 0 ? '今天 key 入' : '已等 ' + days + ' 天'}（按 key 单日期）</p>}<div className="actions"><WhatsAppButton phone={o.phone} />{o.phone && <a href={'tel:' + o.phone.replace(/[^+\d]/g, '')}>联系顾客</a>}{!o.cancelled && <button className="secondary" disabled={busy} onClick={() => editOrder(o)}>修改 / 安装</button>}{tab === 'credit' ? <>
         <button type="button" disabled={busy} onClick={() => void approveCredit(o)}>Approve</button>
         <button type="button" className="secondary" disabled={busy} onClick={() => void toggle(o, true)}>Reject</button>
-      </> : <button className="secondary" disabled={busy} onClick={() => void toggle(o)}>{o.cancelled ? '恢复' : '取消订单'}</button>}</div></article>; })}</div></section></div>
+      </> : <button className="secondary" disabled={busy} onClick={() => void toggle(o)}>{o.cancelled ? '恢复' : '取消订单'}</button>}{tab === 'cancelled' && <button type="button" className="secondary" disabled={busy} onClick={() => void permanentlyCancel(o)}>永久取消</button>}</div></article>; })}</div></section></div>
     </>}
     <footer>LG PV Tracker · 订单、计分、佣金与顾客资料</footer>
   </main>;

@@ -1,7 +1,7 @@
 export const agents: Record<string, string> = { LGM121099: 'WILLIE LIM', LGM214656: 'LIEU WEI TIAN' };
 export const categories = ['Water purifier', 'Air purifier', 'Washer', 'Dryer', 'WashTower', 'TV', 'Fridge', 'Air conditioner', 'Dishwasher', 'Styler'];
 export const empty = { customer: '', phone: '', order_number: '', agent: '', category: '', model: '', sale_type: 'subscribe', years: '' as number | '', monthly_fee: '' as number | '', original_fee: '' as number | '', offer: '', manual_pv: 0, cash_price: '' as number | '', installed_on: '', notes: '', is_credit: false };
-export type Order = Omit<typeof empty, 'installed_on'> & { installed_on: string | null; id: string; pv: number; cancelled: boolean; created_at: string };
+export type Order = Omit<typeof empty, 'installed_on'> & { installed_on: string | null; id: string; pv: number; cancelled: boolean; permanently_cancelled: boolean; created_at: string };
 export const monthNow = () => {
   const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit' }).formatToParts(new Date());
   return parts.find(p => p.type === 'year')?.value + '-' + parts.find(p => p.type === 'month')?.value;
