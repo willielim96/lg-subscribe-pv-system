@@ -537,3 +537,13 @@ textarea:focus { outline: 2px solid #4f86e0; outline-offset: 3px; background: #f
 .search-summary { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin: 16px 0 4px; font-size: 14px; }
 .search-summary span:last-child { display: flex; gap: 8px; flex-wrap: wrap; }
 @media (max-width: 760px) { .filters { grid-template-columns: 1fr 1fr; } .view-tabs { flex-wrap: wrap; } .view-tabs button { flex: 1 1 40%; padding: 10px 8px; } }
+
+.monthly-fee-input {
+    appearance: textfield;
+}
+
+.monthly-fee-input::-webkit-inner-spin-button,
+.monthly-fee-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
