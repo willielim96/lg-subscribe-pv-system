@@ -38,8 +38,8 @@ header,
 
 header {
     margin-bottom: 28px;
-    padding: 28px 32px;
-    background: rgba(255, 255, 255, .65);
+    padding: 22px 32px;
+    background: radial-gradient(ellipse at top right, #e5efff, transparent 60%), rgba(255, 255, 255, .65);
     border: 1px solid rgba(255, 255, 255, .9);
     border-radius: 24px;
     box-shadow: 0 12px 40px #22242610;
@@ -58,6 +58,10 @@ h2 {
 
 p {
     line-height: 1.6
+}
+
+header p {
+    margin: 0;
 }
 
 header p,
