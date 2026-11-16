@@ -16,7 +16,7 @@ export function AgentPVComparison({ orders, month, loaded }: { orders: Order[]; 
           return <article key={agent}>
             <h3>{name}</h3>
             <p><strong>目前 Approved：{fmt(approved)} PV</strong></p>
-            <p>等待 Credit：{fmt(credit)} PV · 含 Credit：{fmt(total)} PV</p>
+            <p>等待 Credit：{fmt(credit)} PV · Credit + Approved：{fmt(total)} PV</p>
             {goals.map(goal => {
               const difference = pvWithoutCredit(goal, approved);
               const result = difference > 0 ? '还差 ' + fmt(difference) + ' PV'
