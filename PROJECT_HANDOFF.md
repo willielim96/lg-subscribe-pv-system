@@ -133,3 +133,5 @@ Not done yet / open items:
 - Water purifier promotion has no start date (all installs up to 2026-12-31 qualify).
 - Production Supabase: "Allow new users to sign up" is ON (strangers still cannot read data). Recommend turning it off.
 - Test database lg-pv-test still holds one test order TEST-SP-001 (safe to delete).
+
+- Order form: the monthly fee input hides spinner arrows and releases focus on wheel scroll to prevent accidental fee changes. Decimal entry and numeric validation are retained.
