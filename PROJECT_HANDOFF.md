@@ -78,6 +78,8 @@ Per agent, per installation month, cancelled and pending orders excluded:
 
 ## 6b. Orders: notes and search
 
+- The Orders / PV dashboard compares both agents for the selected installation month. Each card shows Approved PV, waiting Credit PV, combined PV, and the gaps to both targets based on Approved PV.
+
 - The order form uppercases English letters in Order Number and Model during entry and paste, preserving the cursor position.
 
 - The cancelled list offers confirmed permanent cancellation. Finalized orders leave the recoverable list, customer cards, purchase history and order search. Customers with no remaining orders are hidden. Underlying records and merge links are preserved. Database constraints prevent restoring them.

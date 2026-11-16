@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CommissionSummary } from './commission-summary';
 import { CustomerDatabase } from './customer-database';
+import { AgentPVComparison } from './agent-pv-comparison';
 import { OrderSearch } from './order-search';
 import { WhatsAppButton } from './whatsapp-button';
 import { creditWaitDays, pvWithoutCredit } from '../lib/credit-preview.mjs';
@@ -52,6 +53,7 @@ export function PVDashboard() {
     {view === 'commission' ? <CommissionSummary orders={tracker.orders} agent={agent} month={month} loaded={loaded} /> : view === 'customers' ? <CustomerDatabase orders={tracker.orders} loaded={loaded} db={db} /> : view === 'search' ? <OrderSearch orders={tracker.orders} loaded={loaded} busy={busy} onEditOrder={editOrder} /> : <>
     <section className="stats"><article className="hero"><small>MONTHLY PERFORMANCE</small><h2>{loaded ? fmt(total) : '—'} <span>PV</span></h2><p>{month} · {agents[agent]}</p></article><article><small>已安装订单</small><h2>{loaded ? installed.length : '—'}</h2><p>计入当前月份</p></article><article><small>Waiting List</small><h2>{loaded ? waiting.length : '—'}</h2><p>等待安装 · 暂不计分</p></article><article><small>Credit 订单</small><h2>{loaded ? creditCount : '—'}</h2><p>当前 Agent · 不限月份</p></article></section>
     <section className="targets">{[15000, 22100].map(goal => <article key={goal}><div><strong>{fmt(goal)} PV 目标</strong><span>{loaded ? total >= goal ? '已达标 ✓' : '还差 ' + fmt(goal - total) : '加载中'}</span></div><progress max={goal} value={total} />{loaded && <p><strong>目前 Approved：{fmt(withoutCredit)} PV</strong> · {withoutCredit < goal ? '还差 ' + fmt(goal - withoutCredit) + ' PV' : withoutCredit === goal ? '刚好达标' : '超出 ' + fmt(withoutCredit - goal) + ' PV'}</p>}</article>)}<article><div><strong>等待 Credit PV</strong><b>{loaded ? fmt(creditPV) + ' PV' : '—'}</b></div><p>所选安装月份 · 已包含在上方总 PV</p></article></section>
+    <AgentPVComparison orders={tracker.orders} month={month} loaded={loaded} />
     <p className="message" role="status">{message}</p>
     <div className="workspace"><section className="panel"><h2 ref={editHeading} tabIndex={-1}>{editing ? '修改订单' : '新增订单'}</h2><p className="muted">一张 Order Number 对应一台产品</p><form onSubmit={save}>
       <label>顾客姓名<input required value={form.customer} onChange={e => setForm({ ...form, customer: e.target.value.toUpperCase() })} /></label>
