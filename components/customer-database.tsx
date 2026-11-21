@@ -45,11 +45,18 @@ export function CustomerDatabase({ orders, loaded, db }: { orders: Order[]; load
       <small>系统不会自动合并。如果是同一位顾客，请打开顾客详情手动合并。</small>
     </div>}
     <div className="customer-list">
-      {!visible.length ? <p className="empty">找不到顾客</p> : visible.map(c => <article className="order customer-row" key={c.key}>
+      {!visible.length ? <p className="empty">找不到顾客</p> : visible.map(c => {
+        const counts = new Map<string, number>();
+        for (const order of c.orders) {
+          if (!order.cancelled) counts.set(order.agent, (counts.get(order.agent) ?? 0) + 1);
+        }
+        return <article className="order customer-row" key={c.key}>
         <div className="orderhead"><button className="link" onClick={() => setOpenKey(c.key)}>{c.name}</button><b>{fmt(c.installedPV)} PV</b></div>
         <p>{c.phone || '无电话号码'} · 订单 {c.totalOrders} · 已安装 {c.installedOrders}</p>
+        {counts.size > 0 && <p>Agent：{Array.from(counts, ([code, count]) => (agents[code] || code) + ' · ' + count + ' 单').join(' / ')}</p>}
         <div className="actions"><WhatsAppButton phone={c.phone} /><button className="secondary" onClick={() => setOpenKey(c.key)}>购买历史</button></div>
-      </article>)}
+      </article>;
+      })}
     </div>
   </section>;
 }
